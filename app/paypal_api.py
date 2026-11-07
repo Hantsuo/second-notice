@@ -97,6 +97,16 @@ def get_plan(plan_id: str) -> dict:
         return {}
 
 
+def get_subscription(subscription_id: str) -> dict:
+    """Fetch a subscription: status, plan, subscriber."""
+    if not configured():
+        return {}
+    try:
+        return _call("GET", f"/v1/billing/subscriptions/{urllib.parse.quote(subscription_id)}")
+    except urllib.error.HTTPError:
+        return {}
+
+
 def reactivate_subscription(subscription_id: str, reason: str) -> dict:
     """Ask PayPal to re-activate a suspended subscription."""
     if not configured() or subscription_id.startswith("I-DEMO") or subscription_id.startswith("I-LIVE"):

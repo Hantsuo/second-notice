@@ -86,6 +86,7 @@ def _new_case(event: dict) -> dict:
         "status": "open",
         "strategy": decision.strategy,
         "rationale": decision.rationale,
+        "source": event.get("_source", "live"),
         "created_at": store.now(),
         "updated_at": store.now(),
     }
@@ -140,6 +141,7 @@ async def demo_fail(request: Request) -> JSONResponse:
     """Seed a failure without PayPal, for the demo."""
     payload = await request.json()
     event = {
+        "_source": "demo",
         "event_type": "BILLING.SUBSCRIPTION.PAYMENT.FAILED",
         "resource": {
             "billing_agreement_id": payload.get("subscription_id", "I-DEMO"),
@@ -151,6 +153,49 @@ async def demo_fail(request: Request) -> JSONResponse:
     }
     case = _new_case(event)
     return JSONResponse({"case": case["id"], "strategy": case["strategy"], "rationale": case["rationale"]})
+
+
+@app.post("/replay/subscription/{subscription_id}")
+def replay_subscription(subscription_id: str) -> JSONResponse:
+    """
+    Bind a case to a real PayPal subscription.
+
+    PayPal cannot be told to fail a live charge on demand, so this replays a
+    failure against the subscription's real plan, price and payer. Everything
+    after this point - the page, the order, the capture, the re-activation - is
+    real API traffic.
+    """
+    sub = paypal_api.get_subscription(subscription_id)
+    if not sub:
+        return JSONResponse({"error": "subscription not found"}, status_code=404)
+
+    plan_id = sub.get("plan_id", "")
+    plan = paypal_api.get_plan(plan_id)
+    cycles = plan.get("billing_cycles") or []
+    price = (cycles[0].get("pricing_scheme") or {}).get("fixed_price") or {}
+    amount = price.get("value") or "0.00"
+    currency = price.get("currency_code") or "USD"
+
+    event = {
+        "_source": "replay",
+        "event_type": "BILLING.SUBSCRIPTION.PAYMENT.FAILED",
+        "id": "REPLAY-" + subscription_id[-8:],
+        "resource": {
+            "billing_agreement_id": subscription_id,
+            "plan_id": plan_id,
+            "amount": {"total": amount, "currency_code": currency},
+            "payment_failure_reason": "INSTRUMENT_DECLINED",
+            "payer": {"email_address": sub.get("subscriber", {}).get("email_address", "")},
+        },
+    }
+    case = _new_case(event)
+    return JSONResponse({
+        "case": case["id"],
+        "subscription": subscription_id,
+        "plan": plan.get("name"),
+        "amount": amount,
+        "strategy": case["strategy"],
+    })
 
 
 @app.get("/r/{case_id}", response_class=HTMLResponse)
@@ -249,8 +294,13 @@ def complete(case_id: str, token: str) -> RedirectResponse:
     case["updated_at"] = store.now()
     store.upsert_case(DB, case)
     store.add_event(DB, case_id, "captured", {"order": token, "status": capture.get("status")})
-    paypal_api.reactivate_subscription(case["subscription"], "Second Notice recovery")
-    store.add_event(DB, case_id, "subscription_reactivated", {"subscription": case["subscription"]})
+    activated = paypal_api.reactivate_subscription(case["subscription"], "Second Notice recovery")
+    sub = paypal_api.get_subscription(case["subscription"])
+    store.add_event(DB, case_id, "subscription_reactivated", {
+        "subscription": case["subscription"],
+        "activated": activated,
+        "status_now": sub.get("status", "unknown"),
+    })
     return RedirectResponse(f"/r/{case_id}/done", status_code=303)
 
 
@@ -275,10 +325,10 @@ def dashboard() -> HTMLResponse:
     rows = "".join(
         f"<tr><td>{html.escape(c['id'])}</td><td>{html.escape(c['plan'])}</td>"
         f"<td>{c['amount']}</td><td>{html.escape(c['strategy'] or '')}</td>"
-        f"<td>{html.escape(c['status'])}</td>"
+        f"<td>{html.escape(c['status'])}</td><td>{html.escape(c.get('source', 'live'))}</td>"
         f"<td><a href='/r/{c['id']}'>open</a></td></tr>"
         for c in cases
-    ) or "<tr><td colspan=6>No cases yet. POST /demo/fail to make one.</td></tr>"
+    ) or "<tr><td colspan=7>No cases yet. POST /demo/fail to make one.</td></tr>"
     page = f"""<!doctype html><html><head><meta charset="utf-8"><title>Second Notice</title>
 <style>body{{font:15px/1.5 -apple-system,Segoe UI,sans-serif;margin:0;background:#f7f8fa;color:#101418}}
 main{{max-width:960px;margin:6vh auto;padding:0 20px}}
@@ -294,7 +344,7 @@ th{{background:#fbfcfd;color:#5b6672;font-weight:600}}</style></head><body><main
 <div class="card">At risk<b>${at_risk/100:,.2f}</b></div>
 <div class="card">Cases<b>{len(cases)}</b></div>
 </div>
-<table><tr><th>Case</th><th>Plan</th><th>Amount</th><th>Strategy</th><th>Status</th><th></th></tr>{rows}</table>
+<table><tr><th>Case</th><th>Plan</th><th>Amount</th><th>Strategy</th><th>Status</th><th>Source</th><th></th></tr>{rows}</table>
 </main></body></html>"""
     return HTMLResponse(page)
 
