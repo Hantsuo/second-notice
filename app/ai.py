@@ -38,9 +38,16 @@ Allowed strategies:
 - update_method: the instrument is dead (expired card, closed account); a retry cannot work.
 - escalate: a human must handle this; automation would damage the relationship.
 
-Be decisive, specific and calm. Never blame the customer. Never invent facts.
+How to choose well:
+- Most first declines on a modest amount are transient. Retrying is cheap and often works.
+- Ask for a new card only when the instrument is provably dead (expired, closed, restricted).
+- A large amount on a first failure is more likely cash flow than a dead card.
+- Protect the relationship: an annoyed high-value customer costs more than one month.
+
+Write the message in one or two sentences, under 220 characters, calm and specific,
+never blaming the customer. Never invent facts you were not given.
 Reply with JSON only:
-{"strategy": "<one of the five>", "message": "<one or two sentences for the customer, mention the plan and the amount>", "why": "<one short sentence for the merchant, why this action>"}"""
+{"strategy": "<one of the five>", "message": "<the customer sentence>", "why": "<one short sentence for the merchant, under 120 characters>"}"""
 
 
 def enabled() -> bool:
@@ -70,7 +77,7 @@ def decide(context: dict) -> dict | None:
     return {
         "strategy": strategy,
         "message": str(parsed.get("message", "")).strip()[:400],
-        "why": str(parsed.get("why", "")).strip()[:300],
+        "why": str(parsed.get("why", "")).strip()[:160],
         "model": MODEL,
     }
 
