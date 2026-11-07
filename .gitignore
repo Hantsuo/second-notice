@@ -1,6 +1,10 @@
-.venv/
+demo/.profile/
+demo/raw/
+demo/node_modules/
+demo/*.png
+demo/*.webm
 __pycache__/
-*.pyc
-*.db
 .pytest_cache/
+.venv/
+data/
 .env

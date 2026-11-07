@@ -199,7 +199,7 @@ def replay_subscription(subscription_id: str) -> JSONResponse:
         "case": case["id"],
         "subscription": subscription_id,
         "plan": plan.get("name"),
-        "amount": amount,
+        "amount": case["amount"],
         "strategy": case["strategy"],
     })
 
