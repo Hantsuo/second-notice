@@ -68,6 +68,11 @@ def _new_case(event: dict) -> dict:
     email = resource.get("payer", {}).get("email_address") or resource.get("subscriber", {}).get("email_address")
     reason_code = resource.get("payment_failure_reason") or resource.get("reason_code") or "UNKNOWN"
 
+    try:
+        amount = f"{Decimal(str(amount)):.2f}"
+    except (InvalidOperation, ValueError):
+        amount = "0.00"
+
     kind, _ = engine.classify(reason_code)
     cents = _cents(amount)
     if cents == 0:
