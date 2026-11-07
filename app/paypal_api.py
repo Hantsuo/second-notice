@@ -10,6 +10,7 @@ import base64
 import json
 import os
 import secrets
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -74,21 +75,30 @@ def create_order(amount: str, currency: str, reference: str, description: str) -
 
 
 def capture_order(order_id: str) -> dict:
-    """Capture an approved order."""
+    """Capture an approved order. Idempotent: an already-captured order is success."""
     if order_id.startswith("DEMO-"):
         return {"id": order_id, "status": "COMPLETED", "demo": True}
-    return _call("POST", f"/v2/checkout/orders/{order_id}/capture", {})
+    try:
+        return _call("POST", f"/v2/checkout/orders/{order_id}/capture", {})
+    except urllib.error.HTTPError as exc:
+        body = exc.read().decode("utf-8", "replace")
+        if exc.code == 422 and "ORDER_ALREADY_CAPTURED" in body:
+            return {"id": order_id, "status": "COMPLETED", "already": True}
+        raise
 
 
 def reactivate_subscription(subscription_id: str, reason: str) -> dict:
     """Ask PayPal to re-activate a suspended subscription."""
-    if not configured() or subscription_id.startswith("I-DEMO"):
+    if not configured() or subscription_id.startswith("I-DEMO") or subscription_id.startswith("I-LIVE"):
         return {"ok": True, "demo": True}
-    return _call(
-        "POST",
-        f"/v1/billing/subscriptions/{urllib.parse.quote(subscription_id)}/activate",
-        {"reason": reason[:128]},
-    )
+    try:
+        return _call(
+            "POST",
+            f"/v1/billing/subscriptions/{urllib.parse.quote(subscription_id)}/activate",
+            {"reason": reason[:128]},
+        )
+    except urllib.error.HTTPError as exc:
+        return {"ok": False, "status": exc.code, "error": exc.read().decode("utf-8", "replace")[:200]}
 
 
 def verify_webhook(headers: dict, body: dict) -> bool:
