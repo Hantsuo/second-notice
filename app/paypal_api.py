@@ -87,6 +87,16 @@ def capture_order(order_id: str) -> dict:
         raise
 
 
+def get_plan(plan_id: str) -> dict:
+    """Fetch a billing plan, used to recover the price when the event omits it."""
+    if not configured():
+        return {}
+    try:
+        return _call("GET", f"/v1/billing/plans/{urllib.parse.quote(plan_id)}")
+    except urllib.error.HTTPError:
+        return {}
+
+
 def reactivate_subscription(subscription_id: str, reason: str) -> dict:
     """Ask PayPal to re-activate a suspended subscription."""
     if not configured() or subscription_id.startswith("I-DEMO") or subscription_id.startswith("I-LIVE"):

@@ -50,12 +50,29 @@ def _new_case(event: dict) -> dict:
     amount = (resource.get("amount") or {}).get("total") or (resource.get("amount") or {}).get("value") or "0.00"
     currency = (resource.get("amount") or {}).get("currency_code") or "USD"
     plan = resource.get("plan_id") or "subscription"
+
+    if not amount or amount == "0.00":
+        plan_info = paypal_api.get_plan(resource.get("id", "")) if str(resource.get("id", "")).startswith("P-") else {}
+        cycles = plan_info.get("billing_cycles") or []
+        if cycles:
+            price = (cycles[0].get("pricing_scheme") or {}).get("fixed_price") or {}
+            amount = price.get("value") or amount
+            currency = price.get("currency_code") or currency
+            plan = plan_info.get("name") or plan
+
+    if str(subscription).startswith("P-"):
+        subscription = "SUB-" + str(event.get("id", ""))[-8:]
+    if str(plan).startswith("P-"):
+        plan = "unknown plan"
     email = resource.get("payer", {}).get("email_address") or resource.get("subscriber", {}).get("email_address")
     reason_code = resource.get("payment_failure_reason") or resource.get("reason_code") or "UNKNOWN"
 
     kind, _ = engine.classify(reason_code)
     cents = _cents(amount)
-    decision = engine.decide(failures=1, amount_cents=cents, kind=kind)
+    if cents == 0:
+        decision = engine.Decision("escalate", "Amount missing from the event; a human should price it.")
+    else:
+        decision = engine.decide(failures=1, amount_cents=cents, kind=kind)
 
     case = {
         "id": "SN-" + secrets.token_hex(4).upper(),
