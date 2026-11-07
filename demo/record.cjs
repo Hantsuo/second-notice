@@ -224,30 +224,26 @@ ${body.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</pre></div>
   await caption(page, 'Checkout runs on PayPal', 'Sandbox buyer and sandbox card: no real money moves.', 5600);
 
   // The payer approves in the OpenBot browser (this Chromium cannot drive the
-  // sandbox checkout button), so hand off the live URL and wait for the capture.
+  // sandbox checkout button), so hand off the live URL and wait for the signal.
   fs.writeFileSync(path.join(HERE, 'current.json'), JSON.stringify({ case: caseId, url: page.url() }));
-  console.log('HANDOFF', caseId, page.url());
+  const token = new URL(page.url()).searchParams.get('token');
+  console.log('HANDOFF', caseId, token);
   const waitStart = Date.now();
-  let recovered = false;
-  for (let i = 0; i < 90; i++) {
-    const r = await page.evaluate(async (id) => {
-      const resp = await fetch('/api/cases');
-      const data = await resp.json();
-      return (data.cases || []).find((c) => c.id === id) || null;
-    }, caseId).catch(() => null);
-    if (r && r.status === 'recovered') {
-      recovered = true;
-      break;
-    }
-    await page.waitForTimeout(2000);
+  const signalFile = path.join(HERE, 'approved.json');
+  for (let i = 0; i < 300; i++) {
+    if (fs.existsSync(signalFile)) break;
+    await page.waitForTimeout(1000);
   }
-  console.log('recovered:', recovered, 'after', Math.round((Date.now() - waitStart) / 1000), 's');
+  const waitEnd = Date.now();
+  console.log('approved signal after', Math.round((waitEnd - waitStart) / 1000), 's');
   fs.writeFileSync(
     path.join(HERE, 'markers.json'),
-    JSON.stringify({ case: caseId, videoStart: VIDEO_START, waitStart, waitEnd: Date.now() }, null, 2)
+    JSON.stringify({ case: caseId, videoStart: VIDEO_START, waitStart, waitEnd }, null, 2)
   );
 
-  await page.goto(`${BASE}/r/${caseId}/done`, { waitUntil: 'domcontentloaded' });
+  // PayPal redirects the payer here once approved; capture, then re-activate.
+  await page.goto(`${BASE}/r/${caseId}/return?token=${token}`, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector("text=You're all set", { timeout: 60000 });
   await page.waitForTimeout(500);
   await caption(page, 'Captured, then the subscription is re-activated',
     'POST /v1/billing/subscriptions/' + SUB_ID + '/activate', 6500);
