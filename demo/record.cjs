@@ -32,7 +32,7 @@ const CSS = `
 #sn-full .lede{font-size:27px;color:#9fb0c3;margin-top:20px;line-height:1.45;max-width:900px}
 #sn-full .box{background:#0f1621;border:1px solid #1c2836;border-radius:14px;padding:30px 34px;margin-top:8px}
 #sn-full .mono{font-family:Consolas,"Cascadia Mono",monospace;font-size:20px;line-height:1.62;
-  color:#c7e0ff;white-space:pre;margin:0}
+  color:#c7e0ff;white-space:pre-wrap;overflow-wrap:anywhere;margin:0;max-width:1040px}
 #sn-full .row{display:flex;gap:14px;align-items:baseline;font-size:26px;color:#c3d2e2;margin-top:12px}
 #sn-full .dot{color:#3ddc97;font-size:26px}
 #sn-cap{position:fixed;left:0;right:0;bottom:0;z-index:2147483647;padding:26px 40px 30px;
@@ -243,6 +243,7 @@ ${body.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</pre></div>
     { timeout: 60000 }
   );
   await dismissCookies(page);
+  await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(400);
   await caption(page, 'Checkout runs on PayPal', 'Sandbox buyer and sandbox card: no real money moves.', 5600);
 
