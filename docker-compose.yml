@@ -1,0 +1,9 @@
+services:
+  second-notice:
+    build: .
+    container_name: second-notice
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8020:8020"
+    env_file:
+      - .env
