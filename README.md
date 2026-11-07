@@ -7,7 +7,7 @@ happens: the customer is not asked to fix the card, the merchant does not know
 how much is at risk, and the subscription quietly suspends. Commercial recovery
 tools (Churnkey, Baremetrics Recover) are Stripe-only. This is the PayPal gap.
 
-**Demo video:** https://youtu.be/_-fUHzj8WGs Â· **Live:** https://second-notice.phosphor-bbs.duckdns.org/dashboard
+**Demo video:** https://youtu.be/ZQhQmaML8vM Â· **Live:** https://second-notice.phosphor-bbs.duckdns.org/dashboard
 
 ## What it does
 
@@ -15,8 +15,8 @@ tools (Churnkey, Baremetrics Recover) are Stripe-only. This is the PayPal gap.
    verified against PayPal on every event.
 2. Builds a case: subscription, plan, price (resolved from the PayPal API), payer,
    failure code, amount at risk.
-3. **An AI desk decides the move** â€” retry now, wait 48h, split the amount, ask for
-   a new card, or hand it to a human â€” and writes the sentence the customer reads.
+3. **An AI desk decides the move** â€?retry now, wait 48h, split the amount, ask for
+   a new card, or hand it to a human â€?and writes the sentence the customer reads.
    Deterministic rules guard the edges: the model can never retry a restricted
    account, keep retrying after three failures, or automate a high-value case.
 4. Serves a hosted recovery page: why it failed, what to do, and a PayPal button.
@@ -32,7 +32,7 @@ hard policy, and every step lands in the case timeline (`decided`, `ai_decided`)
 
 It runs off the request path: PayPal gets its 200 in milliseconds, the case exists
 immediately with the rule-based default, and the AI's call replaces it seconds
-later. If the model is slow or down, the case simply stays on the rules â€” a dead
+later. If the model is slow or down, the case simply stays on the rules â€?a dead
 model never blocks a recovery.
 
 Any provider works:
