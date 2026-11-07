@@ -8,3 +8,7 @@ __pycache__/
 .venv/
 data/
 .env
+demo/.edge-profile/
+demo/current.json
+demo/markers.json
+demo/frames/
