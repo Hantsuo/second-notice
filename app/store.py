@@ -5,11 +5,12 @@ One table per idea, no ORM: the schema is the documentation.
 """
 
 import json
+import os
 import sqlite3
 import time
 from pathlib import Path
 
-DB_PATH = Path(__file__).resolve().parent.parent / "second-notice.db"
+DB_PATH = Path(os.environ.get("SECOND_NOTICE_DB", Path(__file__).resolve().parent.parent / "second-notice.db"))
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS cases (

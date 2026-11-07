@@ -7,3 +7,7 @@ services:
       - "127.0.0.1:8020:8020"
     env_file:
       - .env
+    environment:
+      SECOND_NOTICE_DB: /data/second-notice.db
+    volumes:
+      - /opt/second-notice/data:/data
