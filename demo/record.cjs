@@ -201,7 +201,30 @@ async function main() {
 
 ${body.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</pre></div>
     <div class="row" style="margin-top:22px">Real plan, real price, real payer &mdash; only the declined charge is simulated.</div>
-  `, 8000);
+  `, 7000);
+  await clearScene(page);
+
+  // 3b - the model makes the call
+  await caption(page, 'The AI desk reads the case and picks the move',
+    'Failure code, plan, amount, payer, attempt count &mdash; and the sentence the customer will read.', 2500);
+  let ai = null;
+  for (let i = 0; i < 30; i++) {
+    const data = await page.evaluate(async () => (await (await fetch('/api/cases')).json()));
+    ai = (data.cases || []).find((c) => c.id === res.case) || null;
+    if (ai && ai.decided_by === 'ai') break;
+    await page.waitForTimeout(1000);
+  }
+  console.log('ai:', JSON.stringify(ai));
+  const aiJson = JSON.stringify(
+    { decided_by: ai ? ai.decided_by : 'rules', strategy: ai ? ai.strategy : '', why: ai ? ai.rationale : '', message: ai ? ai.message : '' },
+    null,
+    2
+  );
+  await scene(page, `
+    <div class="kicker">One decision, with the reason attached</div>
+    <div class="box"><pre class="mono">${aiJson.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</pre></div>
+    <div class="row" style="margin-top:22px">Rules are the guardrails: never retry a restricted account, never automate a whale.</div>
+  `, 9000);
   await clearScene(page);
 
   // 4 - the customer's page

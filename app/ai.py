@@ -18,6 +18,8 @@ the rules take over whenever the model is slow or down.
 
 import json
 import os
+import threading
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -26,6 +28,10 @@ BASE_URL = os.environ.get("AI_BASE_URL", "https://text.pollinations.ai").rstrip(
 MODEL = os.environ.get("AI_MODEL", "openai")
 API_KEY = os.environ.get("AI_API_KEY", "")
 TIMEOUT = float(os.environ.get("AI_TIMEOUT", "30"))
+
+# One call at a time: the keyless endpoint throttles concurrent requests, and a
+# queue of two cases is still faster than two timeouts.
+_LOCK = threading.Lock()
 
 SYSTEM = """You are the recovery desk of Second Notice, a service that rescues failed
 PayPal subscription payments. You get one failed charge and you decide the single
@@ -64,7 +70,13 @@ def decide(context: dict) -> dict | None:
     rule-based decision, so a dead model never stops a recovery.
     """
     prompt = _prompt(context)
-    raw = _ask(SYSTEM + "\n\n" + prompt) if not API_KEY else _ask_openai(SYSTEM, prompt)
+    with _LOCK:
+        raw = ""
+        for attempt in range(2):
+            raw = _ask(SYSTEM + "\n\n" + prompt) if not API_KEY else _ask_openai(SYSTEM, prompt)
+            if raw:
+                break
+            time.sleep(1.5)
     if not raw:
         return None
     try:
