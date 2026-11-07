@@ -63,7 +63,8 @@ def _new_case(event: dict) -> dict:
     if str(subscription).startswith("P-"):
         subscription = "SUB-" + str(event.get("id", ""))[-8:]
     if str(plan).startswith("P-"):
-        plan = "unknown plan"
+        plan_info = paypal_api.get_plan(str(plan))
+        plan = plan_info.get("name") or "unknown plan"
     email = resource.get("payer", {}).get("email_address") or resource.get("subscriber", {}).get("email_address")
     reason_code = resource.get("payment_failure_reason") or resource.get("reason_code") or "UNKNOWN"
 
