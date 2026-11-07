@@ -82,3 +82,22 @@ def recovery_message(kind: str, plan: str, amount: str, strategy: str) -> str:
     if kind == "declined":
         return f"The bank declined the {plan} payment of ${amount}."
     return f"The {plan} payment of ${amount} could not be collected."
+
+
+def enforce(strategy: str, failures: int, amount_cents: int, kind: str) -> tuple[str, bool]:
+    """
+    Apply the hard guardrails to a model's choice.
+
+    The model may pick the strategy; it may not pick one that automation is not
+    allowed to take. Returns (strategy, changed).
+    """
+    wanted = strategy
+    if strategy not in STRATEGIES:
+        strategy = "escalate"
+    elif kind in ("restricted", "seller"):
+        strategy = "escalate"
+    elif strategy == "retry_now" and failures >= 3:
+        strategy = "escalate"
+    elif strategy == "retry_now" and amount_cents >= 20000:
+        strategy = "escalate"
+    return strategy, strategy != wanted

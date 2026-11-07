@@ -13,16 +13,18 @@ Routes:
 import html
 import os
 import secrets
+import threading
 from decimal import Decimal, InvalidOperation
 
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 
-from . import engine, paypal_api, store
+from . import ai, engine, paypal_api, store
 
 app = FastAPI(title="Second Notice", version="0.1.0")
 
 DB = store.connect()
+DB_LOCK = threading.Lock()
 
 
 def _cents(amount: str) -> int:
@@ -73,7 +75,7 @@ def _new_case(event: dict) -> dict:
     except (InvalidOperation, ValueError):
         amount = "0.00"
 
-    kind, _ = engine.classify(reason_code)
+    kind, reason_text = engine.classify(reason_code)
     cents = _cents(amount)
     if cents == 0:
         decision = engine.Decision("escalate", "Amount missing from the event; a human should price it.")
@@ -92,20 +94,72 @@ def _new_case(event: dict) -> dict:
         "status": "open",
         "strategy": decision.strategy,
         "rationale": decision.rationale,
+        "message": None,
+        "decided_by": "rules",
         "source": event.get("_source", "live"),
         "created_at": store.now(),
         "updated_at": store.now(),
     }
     store.upsert_case(DB, case)
     store.add_event(DB, case["id"], "payment_failed", {"reason": reason_code, "amount": amount, "plan": plan})
-    store.add_event(DB, case["id"], "decided", {"strategy": decision.strategy, "why": decision.rationale})
+    store.add_event(DB, case["id"], "decided", {"strategy": decision.strategy, "why": decision.rationale, "by": "rules"})
+    if ai.enabled() and cents:
+        threading.Thread(
+            target=_ai_refine,
+            args=(
+                case["id"],
+                {
+                    "plan": plan,
+                    "amount": amount,
+                    "currency": currency,
+                    "reason": reason_code,
+                    "reason_text": reason_text,
+                    "failures": 1,
+                    "payer": email,
+                },
+            ),
+            daemon=True,
+        ).start()
     return case
+
+
+def _ai_refine(case_id: str, context: dict) -> None:
+    """
+    Ask the model what to do, then apply it with the guardrails.
+
+    Runs off the request path: the webhook answers PayPal immediately, the case
+    exists in milliseconds, and the AI's call lands a few seconds later.
+    """
+    directive = ai.decide(context)
+    if not directive:
+        return
+    with DB_LOCK:
+        case = store.get_case(DB, case_id)
+        if not case or case["status"] != "open":
+            return
+        kind, _ = engine.classify(case["reason"])
+        strategy, changed = engine.enforce(directive["strategy"], case["failures"], _cents(case["amount"]), kind)
+        why = directive["why"] or case["rationale"]
+        if changed:
+            why = f"{why} (policy: raised to a human)"
+        case["strategy"] = strategy
+        case["rationale"] = why
+        case["message"] = directive["message"] or case["message"]
+        case["decided_by"] = "ai"
+        case["updated_at"] = store.now()
+        store.upsert_case(DB, case)
+        store.add_event(DB, case_id, "ai_decided", {"strategy": strategy, "why": why, "model": directive["model"]})
 
 
 @app.get("/healthz")
 def healthz() -> dict:
     """Liveness and mode."""
-    return {"ok": True, "live_paypal": paypal_api.configured(), "cases": len(store.list_cases(DB))}
+    return {
+        "ok": True,
+        "live_paypal": paypal_api.configured(),
+        "ai": ai.enabled(),
+        "cases": len(store.list_cases(DB)),
+    }
 
 
 @app.get("/api/cases")
@@ -122,6 +176,9 @@ def api_cases() -> JSONResponse:
                 "currency": c["currency"],
                 "status": c["status"],
                 "strategy": c["strategy"],
+                "decided_by": c.get("decided_by") or "rules",
+                "rationale": c.get("rationale"),
+                "message": c.get("message"),
                 "source": c.get("source", "live"),
             }
             for c in cases
@@ -232,7 +289,7 @@ def recovery_page(case_id: str) -> HTMLResponse:
     if not case:
         return HTMLResponse("<h1>Unknown case</h1>", status_code=404)
     kind, _ = engine.classify(case["reason"])
-    message = engine.recovery_message(kind, case["plan"], case["amount"], case["strategy"])
+    message = case.get("message") or engine.recovery_message(kind, case["plan"], case["amount"], case["strategy"])
     split = case["strategy"] == "split"
     half = f"{Decimal(case['amount']) / 2:.2f}"
     options = (
@@ -352,10 +409,11 @@ def dashboard() -> HTMLResponse:
     rows = "".join(
         f"<tr><td>{html.escape(c['id'])}</td><td>{html.escape(c['plan'])}</td>"
         f"<td>{c['amount']}</td><td>{html.escape(c['strategy'] or '')}</td>"
+        f"<td>{html.escape(c.get('decided_by') or 'rules')}</td>"
         f"<td>{html.escape(c['status'])}</td><td>{html.escape(c.get('source', 'live'))}</td>"
         f"<td><a href='/r/{c['id']}'>open</a></td></tr>"
         for c in cases
-    ) or "<tr><td colspan=7>No cases yet. POST /demo/fail to make one.</td></tr>"
+    ) or "<tr><td colspan=8>No cases yet. POST /demo/fail to make one.</td></tr>"
     page = f"""<!doctype html><html><head><meta charset="utf-8"><title>Second Notice</title>
 <style>body{{font:15px/1.5 -apple-system,Segoe UI,sans-serif;margin:0;background:#f7f8fa;color:#101418}}
 main{{max-width:960px;margin:6vh auto;padding:0 20px}}
@@ -371,7 +429,7 @@ th{{background:#fbfcfd;color:#5b6672;font-weight:600}}</style></head><body><main
 <div class="card">At risk<b>${at_risk/100:,.2f}</b></div>
 <div class="card">Cases<b>{len(cases)}</b></div>
 </div>
-<table><tr><th>Case</th><th>Plan</th><th>Amount</th><th>Strategy</th><th>Status</th><th>Source</th><th></th></tr>{rows}</table>
+<table><tr><th>Case</th><th>Plan</th><th>Amount</th><th>Strategy</th><th>By</th><th>Status</th><th>Source</th><th></th></tr>{rows}</table>
 </main></body></html>"""
     return HTMLResponse(page)
 

@@ -25,6 +25,8 @@ CREATE TABLE IF NOT EXISTS cases (
   status        TEXT NOT NULL DEFAULT 'open',
   strategy      TEXT,
   rationale     TEXT,
+  message       TEXT,
+  decided_by    TEXT,
   source        TEXT NOT NULL DEFAULT 'live',
   created_at    TEXT NOT NULL,
   updated_at    TEXT NOT NULL
@@ -66,6 +68,10 @@ def connect(path: Path | str = DB_PATH) -> sqlite3.Connection:
     cols = [row[1] for row in conn.execute("PRAGMA table_info(cases)").fetchall()]
     if "source" not in cols:
         conn.execute("ALTER TABLE cases ADD COLUMN source TEXT NOT NULL DEFAULT 'live'")
+    if "message" not in cols:
+        conn.execute("ALTER TABLE cases ADD COLUMN message TEXT")
+    if "decided_by" not in cols:
+        conn.execute("ALTER TABLE cases ADD COLUMN decided_by TEXT")
     conn.commit()
     return conn
 
@@ -94,14 +100,18 @@ def upsert_case(conn: sqlite3.Connection, case: dict) -> None:
     conn.execute(
         """
         INSERT INTO cases (id, subscription, payer_email, plan, amount, currency,
-                           failures, reason, status, strategy, rationale, source, created_at, updated_at)
+                           failures, reason, status, strategy, rationale, message, decided_by,
+                           source, created_at, updated_at)
         VALUES (:id, :subscription, :payer_email, :plan, :amount, :currency,
-                :failures, :reason, :status, :strategy, :rationale, :source, :created_at, :updated_at)
+                :failures, :reason, :status, :strategy, :rationale, :message, :decided_by,
+                :source, :created_at, :updated_at)
         ON CONFLICT(id) DO UPDATE SET
           failures = excluded.failures,
           status = excluded.status,
           strategy = excluded.strategy,
           rationale = excluded.rationale,
+          message = excluded.message,
+          decided_by = excluded.decided_by,
           updated_at = excluded.updated_at
         """,
         case,

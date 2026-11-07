@@ -59,3 +59,36 @@ def test_healthz_reports_mode() -> None:
     body = client.get("/healthz").json()
     assert body["ok"] is True
     assert "live_paypal" in body
+
+
+def test_guardrails_override_the_model() -> None:
+    strategy, changed = engine.enforce("retry_now", failures=3, amount_cents=4900, kind="declined")
+    assert (strategy, changed) == ("escalate", True)
+
+    strategy, changed = engine.enforce("retry_now", failures=1, amount_cents=25000, kind="declined")
+    assert (strategy, changed) == ("escalate", True)
+
+    strategy, changed = engine.enforce("bogus", failures=1, amount_cents=1900, kind="declined")
+    assert (strategy, changed) == ("escalate", True)
+
+    strategy, changed = engine.enforce("split", failures=1, amount_cents=4900, kind="declined")
+    assert (strategy, changed) == ("split", False)
+
+
+def test_ai_json_survives_prose_and_fences() -> None:
+    from app import ai
+
+    once = ai._extract_json('{"strategy": "split", "message": "x", "why": "y"}')
+    assert once["strategy"] == "split"
+    fenced = ai._extract_json('Sure.\n```json\n{"strategy": "wait_48h"}\n```\n')
+    assert fenced["strategy"] == "wait_48h"
+
+
+def test_ai_failure_keeps_the_case_working(monkeypatch) -> None:
+    from app import ai
+
+    def boom(*args, **kwargs):
+        raise OSError("offline")
+
+    monkeypatch.setattr(ai.urllib.request, "urlopen", boom)
+    assert ai.decide({"plan": "Pro", "amount": "49.00", "reason": "INSTRUMENT_DECLINED"}) is None
