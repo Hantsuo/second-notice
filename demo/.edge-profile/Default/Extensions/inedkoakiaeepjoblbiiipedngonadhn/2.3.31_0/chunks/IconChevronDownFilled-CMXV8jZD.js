@@ -1,0 +1,7 @@
+import{c as l}from"./tailwind--D9w5F5t.js";
+/**
+ * @license @tabler/icons-vue v3.46.0 - MIT
+ *
+ * This source code is licensed under the MIT license.
+ * See the LICENSE file in the root directory of this source tree.
+ */var a=l("filled","chevron-down-filled","ChevronDownFilled",[["path",{d:"M18.707 8.293a1 1 0 0 1 0 1.414l-6 6a1 1 0 0 1 -1.414 0l-6 -6a1 1 0 0 1 1.414 -1.414l5.293 5.293l5.293 -5.293a1 1 0 0 1 1.414 0",key:"svg-0"}]]);export{a as I};

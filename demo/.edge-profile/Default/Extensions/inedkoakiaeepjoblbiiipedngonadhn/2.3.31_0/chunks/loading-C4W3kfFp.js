@@ -1,0 +1,1 @@
+import{_ as s}from"./tailwind--D9w5F5t.js";import{E as r,G as t}from"./vendor-vue-Nq1w0RH7.js";const o={class:"d-sub mt20"};const n=s({},[["render",function(s,n){return r(),t("div",o,"正在加载此功能...")}]]);export{n as default};

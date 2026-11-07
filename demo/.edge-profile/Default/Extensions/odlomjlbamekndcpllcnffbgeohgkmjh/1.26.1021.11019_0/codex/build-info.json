@@ -1,0 +1,9 @@
+{
+  "build_flavor": "release",
+  "release_channel": "stable",
+  "sha": "400830b577397574e957b87df61d6b81621fffa7",
+  "target": "edge-production",
+  "store": "microsoft-edge-add-ons",
+  "store_id": "d164c321-5c40-47ec-b501-cd410c60a9e8",
+  "extension_id": "odlomjlbamekndcpllcnffbgeohgkmjh"
+}

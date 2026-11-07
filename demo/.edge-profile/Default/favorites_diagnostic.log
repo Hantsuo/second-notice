@@ -1,0 +1,159 @@
+2026-11-07 07:16:46.409: [INFO] CurrentProfilePath: C:\Users\Administrator\OpenBot\Agents\agent-35e17539-bed7-4fe8-bb8b-1427d054820c\hackathons\second-notice\demo\.edge-profile\Default
+2026-11-07 07:16:46.409: [INFO] Profiles total count: 1
+2026-11-07 07:16:46.409: [INFO] Profile: name=用户配置 1 path=C:\Users\Administrator\OpenBot\Agents\agent-35e17539-bed7-4fe8-bb8b-1427d054820c\hackathons\second-notice\demo\.edge-profile\Default lastActive=null
+2026-11-07 07:16:46.409: [INFO] LastUsedProfileDir: C:\Users\Administrator\OpenBot\Agents\agent-35e17539-bed7-4fe8-bb8b-1427d054820c\hackathons\second-notice\demo\.edge-profile\Default
+2026-11-07 07:16:46.409: [INFO] VisibilityChanged: 0
+2026-11-07 07:16:46.470: [INFO] OnDoneLoading sync enabled: 0
+2026-11-07 07:16:46.470: [INFO] BookmarkModelLoaded, ids_reassigned: 0
+2026-11-07 07:16:46.470: [INFO] BookmarksLoadDropped droppedNodes=0
+2026-11-07 07:16:46.470: [INFO] BookmarksSnapshot Startup total=0 bar=0 other=0 mobile=0 showBar=0 showBarNTP=1
+2026-11-07 07:16:46.539: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2026-11-07 07:16:47.078: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2026-11-07 07:16:47.080: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 3
+2026-11-07 07:16:47.082: [INFO] Primary account changed.
+2026-11-07 07:16:47.082: [INFO] OnPrimaryAccountChanged PrimaryAccountChangeEvent::Type::kSet
+2026-11-07 07:16:47.088: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 3
+2026-11-07 07:16:47.104: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 3
+2026-11-07 07:16:49.059: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:16:49.059: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:16:49.059: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:16:49.059: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:16:49.059: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:16:49.059: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:16:49.059: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:16:49.060: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:16:49.060: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:16:49.060: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:16:49.060: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:16:49.060: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:16:49.060: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:16:49.060: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.172: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.173: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.173: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.173: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.174: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.174: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.174: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.174: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.175: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.175: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.175: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.175: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.175: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.176: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.176: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.176: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.176: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.176: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.176: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.177: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.177: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.177: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.177: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.177: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.178: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.178: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.178: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.178: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.179: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.179: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.179: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.179: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.179: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.180: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.180: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.180: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.180: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.180: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.181: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.181: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.181: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.181: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.181: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.181: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.182: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.182: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.182: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.182: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.183: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.183: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.183: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.183: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.183: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.184: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.184: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.184: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.184: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:31.198: [INFO] BookmarkBarPrefChanged showBar=0 showBarNTP=0
+2026-11-07 07:17:31.245: [INFO] VisibilityChanged: 1
+2026-11-07 07:17:49.275: [INFO] CurrentProfilePath: C:\Users\Administrator\OpenBot\Agents\agent-35e17539-bed7-4fe8-bb8b-1427d054820c\hackathons\second-notice\demo\.edge-profile\Default
+2026-11-07 07:17:49.275: [INFO] Profiles total count: 1
+2026-11-07 07:17:49.275: [INFO] Profile: name=个人 path=C:\Users\Administrator\OpenBot\Agents\agent-35e17539-bed7-4fe8-bb8b-1427d054820c\hackathons\second-notice\demo\.edge-profile\Default lastActive=2026-11-07T07:16:54.628Z
+2026-11-07 07:17:49.275: [INFO] LastUsedProfileDir: C:\Users\Administrator\OpenBot\Agents\agent-35e17539-bed7-4fe8-bb8b-1427d054820c\hackathons\second-notice\demo\.edge-profile\Default
+2026-11-07 07:17:49.275: [INFO] MostRecentlyActiveProfile: name=个人 path=C:\Users\Administrator\OpenBot\Agents\agent-35e17539-bed7-4fe8-bb8b-1427d054820c\hackathons\second-notice\demo\.edge-profile\Default lastActive=2026-11-07T07:16:54.628Z
+2026-11-07 07:17:49.275: [INFO] VisibilityChanged: 0
+2026-11-07 07:17:49.355: [INFO] OnDoneLoading sync enabled: 1
+2026-11-07 07:17:49.355: [INFO] BookmarkModelLoaded, ids_reassigned: 0
+2026-11-07 07:17:49.355: [INFO] BookmarksLoadDropped droppedNodes=0
+2026-11-07 07:17:49.355: [INFO] BookmarksSnapshot Startup total=14 bar=8 other=6 mobile=0 showBar=0 showBarNTP=1
+2026-11-07 07:17:49.428: [INFO] BookmarkBarPrefChanged showBar=0 showBarNTP=0
+2026-11-07 07:17:49.626: [INFO] VisibilityChanged: 1
+2026-11-07 07:17:50.165: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.165: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.166: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.166: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.166: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.166: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.166: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.166: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.166: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.166: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.166: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.167: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.167: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.167: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.167: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.167: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.167: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.167: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.167: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.167: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.167: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.167: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.167: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.167: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.167: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.168: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.168: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.168: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.168: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.168: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.168: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.168: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.169: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.169: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.169: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.169: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.169: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.169: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.169: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.170: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.170: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.170: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.170: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.170: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.170: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.170: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.171: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.171: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.171: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.171: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.171: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.171: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.171: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.171: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.171: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.172: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:17:50.172: [INFO] BookmarkNodeAdded, ABU: 0
+2026-11-07 07:18:54.543: [INFO] Sync initialization duration: 65185ms

@@ -108,6 +108,27 @@ def healthz() -> dict:
     return {"ok": True, "live_paypal": paypal_api.configured(), "cases": len(store.list_cases(DB))}
 
 
+@app.get("/api/cases")
+def api_cases() -> JSONResponse:
+    """Cases as JSON: what the dashboard renders, for scripts and demos."""
+    cases = store.list_cases(DB)
+    return JSONResponse({
+        "cases": [
+            {
+                "id": c["id"],
+                "subscription": c["subscription"],
+                "plan": c["plan"],
+                "amount": c["amount"],
+                "currency": c["currency"],
+                "status": c["status"],
+                "strategy": c["strategy"],
+                "source": c.get("source", "live"),
+            }
+            for c in cases
+        ]
+    })
+
+
 @app.post("/webhook/paypal")
 async def paypal_webhook(request: Request) -> JSONResponse:
     """Receive a PayPal webhook, verify it, and open or update a case."""

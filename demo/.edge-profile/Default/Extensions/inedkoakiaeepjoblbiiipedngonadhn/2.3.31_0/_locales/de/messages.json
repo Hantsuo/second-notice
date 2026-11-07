@@ -1,0 +1,11 @@
+{
+   "appDesc": {
+      "message": "iTab ist ein neuer individualisierter Tab mit kostenlosen individuellen Widgets: Kalender, Wetter, Nachrichten, Grundbildern usw."
+   },
+   "appName": {
+      "message": "iTab New Tab"
+   },
+   "commandOpenOverlay": {
+      "message": "快速打开 iTab 浮层"
+   }
+}

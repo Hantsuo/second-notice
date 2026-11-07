@@ -100,27 +100,40 @@ async function dismissCookies(page) {
 
 async function paypalLoginIfNeeded(page) {
   await dismissCookies(page);
-  const pw = page.locator('input[type=password]').first();
-  if (!(await pw.isVisible().catch(() => false))) return false; // session cookie still valid
-
   const email = page.locator('input[type=email], input[name="login_email"]').first();
-  if (await email.isVisible().catch(() => false)) {
-    const current = await email.inputValue().catch(() => '');
-    if (!current) await email.fill(BUYER);
+  const pw = page.locator('input[type=password]').first();
+
+  if (await pw.isVisible().catch(() => false)) {
+    if (await email.isVisible().catch(() => false)) {
+      const current = await email.inputValue().catch(() => '');
+      if (!current) await email.fill(BUYER);
+    }
+    await pw.fill(BUYER_PW);
+    await page.locator('#btnLogin, button[type=submit]:has-text("登录"), button:has-text("登录"), button:has-text("Log In")').first().click();
+    return true;
   }
-  await pw.fill(BUYER_PW);
-  await page.locator('#btnLogin, button[type=submit]:has-text("登录"), button:has-text("登录"), button:has-text("Log In")').first().click();
-  return true;
+
+  if (await email.isVisible().catch(() => false)) {
+    await email.fill(BUYER);
+    await page.locator('#btnNext, button:has-text("下一步"), button:has-text("Next")').first().click();
+    await pw.waitFor({ state: 'visible', timeout: 25000 });
+    await pw.fill(BUYER_PW);
+    await page.locator('#btnLogin, button[type=submit]:has-text("登录"), button:has-text("登录"), button:has-text("Log In")').first().click();
+    return true;
+  }
+  return false;
 }
 
 async function main() {
   fs.mkdirSync(RAW, { recursive: true });
+  const VIDEO_START = Date.now();
   const ctx = await chromium.launchPersistentContext(PROFILE, {
     channel: 'msedge',
     headless: !DO_RECORD,
     viewport: { width: 1280, height: 720 },
-    proxy: { server: PROXY },
     locale: 'en-US',
+    ignoreDefaultArgs: ['--enable-automation'],
+    args: ['--disable-blink-features=AutomationControlled'],
     recordVideo: DO_RECORD ? { dir: RAW, size: { width: 1280, height: 720 } } : undefined,
   });
 
@@ -208,15 +221,34 @@ ${body.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</pre></div>
   );
   await dismissCookies(page);
   await page.waitForTimeout(400);
-  await caption(page, 'Checkout runs on PayPal', 'Sandbox buyer and sandbox card: no real money moves.', 5200);
+  await caption(page, 'Checkout runs on PayPal', 'Sandbox buyer and sandbox card: no real money moves.', 5600);
 
-  await page.locator(
-    'input[value="完成购物"], input[value="Complete Purchase"], button:has-text("完成购物"), button:has-text("Complete Purchase"), input[value="同意并订阅"], input[value="Agree and Subscribe"]'
-  ).first().click();
+  // The payer approves in the OpenBot browser (this Chromium cannot drive the
+  // sandbox checkout button), so hand off the live URL and wait for the capture.
+  fs.writeFileSync(path.join(HERE, 'current.json'), JSON.stringify({ case: caseId, url: page.url() }));
+  console.log('HANDOFF', caseId, page.url());
+  const waitStart = Date.now();
+  let recovered = false;
+  for (let i = 0; i < 90; i++) {
+    const r = await page.evaluate(async (id) => {
+      const resp = await fetch('/api/cases');
+      const data = await resp.json();
+      return (data.cases || []).find((c) => c.id === id) || null;
+    }, caseId).catch(() => null);
+    if (r && r.status === 'recovered') {
+      recovered = true;
+      break;
+    }
+    await page.waitForTimeout(2000);
+  }
+  console.log('recovered:', recovered, 'after', Math.round((Date.now() - waitStart) / 1000), 's');
+  fs.writeFileSync(
+    path.join(HERE, 'markers.json'),
+    JSON.stringify({ case: caseId, videoStart: VIDEO_START, waitStart, waitEnd: Date.now() }, null, 2)
+  );
 
-  await page.waitForURL(/second-notice\.phosphor-bbs\.duckdns\.org/, { timeout: 90000 });
-  await page.waitForSelector('text=You\'re all set', { timeout: 90000 });
-  await page.waitForTimeout(600);
+  await page.goto(`${BASE}/r/${caseId}/done`, { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(500);
   await caption(page, 'Captured, then the subscription is re-activated',
     'POST /v1/billing/subscriptions/' + SUB_ID + '/activate', 6500);
 
